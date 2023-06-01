@@ -72,7 +72,7 @@ class App extends Component {
   };
 
   render() {
-    const { images, isLoading, imgSrc, isOpenModal, totalHits, page } =
+    const { images, isLoading, imgSrc, isOpenModal, totalHits } =
       this.state;
     return (
       <div className="App">
