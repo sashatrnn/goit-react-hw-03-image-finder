@@ -13,6 +13,7 @@ class App extends Component {
     query: '',
     page: 1,
     imgSrc: '',
+    totalHits: 0,
     isOpenModal: false,
     isLoading: false,
   };
@@ -48,9 +49,12 @@ class App extends Component {
     this.setState({ isLoading: true });
     try {
       const res = await getImages(this.state.query, this.state.page);
-      this.setState(prev => ({ images: [...prev.images, ...res.hits] }));
+      this.setState(prev => ({
+        totalHits: res.totalHits,
+        images: [...prev.images, ...res.hits],
+      }));
     } catch (error) {
-      this.setState({ error: 'Sorry' });
+      this.setState({ error: 'Oops, not found' });
     } finally {
       this.setState({ isLoading: false });
     }
@@ -68,13 +72,16 @@ class App extends Component {
   };
 
   render() {
-    const { images, isLoading, imgSrc, isOpenModal } = this.state;
+    const { images, isLoading, imgSrc, isOpenModal, totalHits, page } =
+      this.state;
     return (
-      <div className='App'>
+      <div className="App">
         <Searchbar setQuery={this.setQuery} query={this.state.query} />
         <ImageGallery images={images} modalOpen={this.modalOpen} />
         {isLoading && <Loader />}
-        {images.length >= 12 && <Button onClick={this.pageLoad} />}
+        {images.length > 0 && totalHits > images.length && (
+          <Button onClick={this.pageLoad} />
+        )}
         {isOpenModal && <Modal imgSrc={imgSrc} closeModal={this.closeModal} />}
       </div>
     );
